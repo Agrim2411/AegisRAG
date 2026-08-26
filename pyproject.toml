@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aegis-rag"
+version = "0.2.0"
+description = "Agentic AI incident commander with verified, evidence-backed root-cause analysis"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+authors = [{name = "AegisRAG contributors"}]
+dependencies = [
+  "fastapi>=0.110,<1",
+  "langchain-core>=1.0,<2",
+  "langgraph>=1.0,<2",
+  "langgraph-checkpoint-sqlite>=3.0,<4",
+  "uvicorn[standard]>=0.29,<1",
+  "pydantic>=2.6,<3",
+  "pydantic-settings>=2.2,<3",
+  "pyyaml>=6,<7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "httpx>=0.27,<1", "ruff>=0.5,<1"]
+docs = ["reportlab>=4.2,<5"]
+production = [
+  "langchain-openai>=1.0,<2",
+  "langgraph-checkpoint-postgres>=3.0,<4",
+  "opentelemetry-api>=1.30,<2",
+  "opentelemetry-exporter-otlp>=1.30,<2",
+  "opentelemetry-instrumentation-fastapi>=0.51b0,<1",
+  "qdrant-client>=1.13,<2",
+  "redis>=5,<7",
+]
+
+[project.scripts]
+aegis-rag = "aegis_rag.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
