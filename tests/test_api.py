@@ -79,3 +79,40 @@ def test_incident_commander_contract(tmp_path, monkeypatch):
     assert report["hypotheses"]
     assert report["workflow"]["engine"] == "langgraph"
     assert report["workflow"]["verification_passed"] is True
+
+
+def test_demo_and_scenario_provenance(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "aegis_rag.api.get_settings",
+        lambda: Settings(database_url=f"sqlite:///{tmp_path / 'demo.db'}"),
+    )
+    client = TestClient(create_app())
+
+    dashboard = client.get("/demo")
+    assert dashboard.status_code == 200
+    assert "AegisRAG Incident Commander" in dashboard.text
+    assert "synthetic telemetry" in dashboard.text
+    assert "SQLite persistence" in dashboard.text
+
+    detail = client.get(
+        "/v1/scenarios/payments-pool-exhaustion",
+        headers={"x-tenant-id": "acme-payments"},
+    )
+    assert detail.status_code == 200
+    payload = detail.json()
+    assert payload["source_uri"] == "data/scenarios/payments-pool-exhaustion.yaml"
+    assert len(payload["events"]) == 6
+    assert payload["alert"] == {
+        "metric": "http.server.503.rate",
+        "operator": ">",
+        "threshold": 0.1,
+        "occurrences": 2,
+    }
+    assert payload["persistence"]["telemetry_table"] == "telemetry_events"
+    assert payload["persistence"]["incident_table"] == "incidents"
+
+    forbidden = client.get(
+        "/v1/scenarios/payments-pool-exhaustion",
+        headers={"x-tenant-id": "globex-commerce"},
+    )
+    assert forbidden.status_code == 403
