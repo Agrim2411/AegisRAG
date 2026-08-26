@@ -1,8 +1,9 @@
 import time
 from contextlib import asynccontextmanager
+from importlib.resources import files
 
 from fastapi import FastAPI, Header, HTTPException, Request
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 
 from .cache import NullCache, RedisResponseCache
 from .checkpointing import build_checkpointer
@@ -138,6 +139,10 @@ def create_app() -> FastAPI:
     @app.get("/metrics", response_class=PlainTextResponse)
     async def metrics() -> str:
         return state.metrics.prometheus()
+
+    @app.get("/demo", response_class=HTMLResponse, include_in_schema=False)
+    async def demo() -> str:
+        return files("aegis_rag").joinpath("demo.html").read_text(encoding="utf-8")
 
     @app.post("/v1/ingest")
     async def ingest(

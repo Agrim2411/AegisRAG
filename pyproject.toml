@@ -40,6 +40,9 @@ aegis-rag = "aegis_rag.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+aegis_rag = ["demo.html"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
