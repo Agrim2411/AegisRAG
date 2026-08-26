@@ -436,6 +436,9 @@ def markdown_story(markdown: str, styles: dict[str, ParagraphStyle]) -> list[Flo
         if in_code:
             code_lines.append(line)
             continue
+        if list_items and raw_line[:1].isspace() and line.strip():
+            list_items[-1] = f"{list_items[-1]} {line.strip()}"
+            continue
         heading = re.match(r"^(#{1,4})\s+(.+)$", line)
         if heading:
             flush_all()
