@@ -134,11 +134,20 @@ python3 -m uvicorn aegis_rag.api:app --host 127.0.0.1 --port 8000 --reload
 
 Open:
 
+- Incident Commander dashboard: `http://127.0.0.1:8000/demo`
 - Swagger UI: `http://127.0.0.1:8000/docs`
 - OpenAPI document: `http://127.0.0.1:8000/openapi.json`
 - Liveness: `http://127.0.0.1:8000/healthz`
 - Readiness: `http://127.0.0.1:8000/readyz`
 - Metrics: `http://127.0.0.1:8000/metrics`
+
+The dashboard is the recommended demo. It makes the data provenance explicit: scenario events
+come from deterministic YAML fixtures under `data/scenarios`, are replayed and written to the
+tenant-scoped `telemetry_events` table, and produce a stored incident only after the declared
+consecutive-sample alert rule fires. The interface visualizes the alert boundary, persisted event
+timeline, LangGraph stages, ranked hypotheses, verified citations, and human-approval boundary.
+After analysis it reloads the report through `GET /v1/incidents/{id}` to prove that the report and
+timeline were persisted rather than held only in the browser response.
 
 In a second terminal, list and run scenarios:
 
@@ -315,9 +324,11 @@ Example response shape:
 
 | Endpoint | Purpose |
 | --- | --- |
+| `GET /demo` | Open the visual incident-simulation and investigation dashboard |
 | `POST /v1/incidents/analyze` | Run the checkpointed incident-analysis graph |
 | `GET /v1/incidents/{id}` | Retrieve a tenant-scoped stored report and timeline |
 | `GET /v1/scenarios` | List scenarios visible to the authenticated tenant |
+| `GET /v1/scenarios/{id}` | Inspect a scenario's source events, alert rule, and persistence targets |
 | `POST /v1/scenarios/run` | Generate telemetry, evaluate alerts, and investigate end to end |
 | `POST /v1/ingest` | Idempotently ingest a runbook, postmortem, or service document |
 | `POST /v1/query` | Ask an evidence-backed knowledge question through LangGraph |
@@ -395,6 +406,7 @@ src/aegis_rag/
 ├── telemetry.py           OpenTelemetry/OTLP instrumentation
 ├── ingestion.py           Structure-aware chunking and provenance
 ├── evaluation.py          Recall@K, MRR, nDCG quality gate
+├── demo.html              Zero-build incident-command dashboard
 └── api.py                 FastAPI application and contracts
 ```
 

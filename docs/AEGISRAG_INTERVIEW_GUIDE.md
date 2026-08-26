@@ -177,6 +177,8 @@ For example: "I chose Qdrant because I needed tenant-filtered dense and sparse r
 - `src/aegis_rag/cache.py`: no-op local cache and Redis adapter.
 - `src/aegis_rag/checkpointing.py`: in-memory or SQLite LangGraph checkpoint selection.
 - `src/aegis_rag/telemetry.py`: optional OTLP trace configuration.
+- `src/aegis_rag/demo.html`: zero-build dashboard for scenario provenance, event replay, alert
+  visualization, graph progress, evidence inspection, approval state, and persistence proof.
 - `data/scenarios`: causal incident and healthy-control definitions.
 - `data/knowledge`: runbooks, postmortems, service catalog, and operating policies.
 - `data/eval/golden.jsonl`: labeled retrieval questions.
@@ -499,14 +501,30 @@ Owning the project means volunteering these limitations before an interviewer di
 
 ### Five-minute demo sequence
 
-1. Show the architecture diagram in README.
-2. Run `make test` and point out tenant, graph, Qdrant, checkpoint, and scenario coverage.
-3. Run `make eval` and explain each metric honestly.
-4. Run `make simulate`.
-5. Point to the six generated events and two-sample alert rule.
-6. Show the top runbook hypothesis, citations, approval flag, and workflow trace.
-7. Run the healthy scenario and show that no incident is created.
-8. Open `workflow.py`, `retrieval.py`, and `scenarios.py` for technical discussion.
+1. Start the API and open `http://127.0.0.1:8000/demo` rather than leading with Swagger.
+2. Point to the simulation-mode label and scenario source path. Explain that the six inputs are
+   deterministic YAML events: one deployment, four metrics, and one application log. They are not
+   presented as live employer telemetry.
+3. Point to the declared alert rule: `http.server.503.rate > 0.10` for two samples. Run the payments
+   scenario and watch the event timeline and threshold chart show why the second violating sample
+   opens an incident.
+4. Show the bounded graph stages. Explain that rewrite is skipped when the first retrieval is
+   sufficient, while citation verification must pass before a grounded report is returned.
+5. Walk through the SEV-1 result, ranked connection-pool hypothesis, exact runbook citation, service
+   ownership evidence, and recovery criteria. Open one citation to show the source passage and hash.
+6. Point to `Human approval required`: AegisRAG proposes rollback-related remediation but does not
+   execute privileged actions.
+7. Show the durable-state card. The UI has reloaded the incident through the tenant-scoped GET API,
+   proving that telemetry is in SQLite's `telemetry_events` table and the report/timeline are in the
+   `incidents` table rather than existing only in the POST response.
+8. Run the healthy control and show that sub-threshold samples produce no incident. Then use tests,
+   evaluation metrics, or `workflow.py`, `retrieval.py`, and `scenarios.py` for deeper discussion.
+
+The dashboard is a presentation layer over the same APIs; it does not move alerting or reasoning
+logic into JavaScript. Scenario loading, tenant checks, event persistence, consecutive-sample
+evaluation, knowledge ingestion, graph execution, citation verification, and report persistence all
+remain server-side. This is an important ownership point when an interviewer asks whether the visual
+demo is merely a scripted animation.
 
 ### Two-minute verbal pitch
 
@@ -641,6 +659,7 @@ make simulate
 make smoke
 
 python3 -m uvicorn aegis_rag.api:app --reload
+# then open http://127.0.0.1:8000/demo
 docker compose up --build
 ```
 
