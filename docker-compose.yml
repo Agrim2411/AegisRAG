@@ -1,0 +1,61 @@
+services:
+  api:
+    build: .
+    restart: on-failure
+    environment:
+      AEGIS_RAG_DATABASE_URL: sqlite:////app/data/aegis.db
+      AEGIS_RAG_CHECKPOINT_PATH: /app/data/langgraph-checkpoints.db
+      AEGIS_RAG_QDRANT_URL: http://qdrant:6333
+      AEGIS_RAG_REDIS_URL: redis://redis:6379/0
+      AEGIS_RAG_OTEL_ENABLED: "true"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+      OTEL_EXPORTER_OTLP_INSECURE: "true"
+    ports:
+      - "8000:8000"
+    volumes:
+      - aegis-data:/app/data
+    depends_on:
+      qdrant:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/readyz')"]
+      interval: 10s
+      timeout: 3s
+      retries: 8
+
+  qdrant:
+    image: qdrant/qdrant:v1.15.4
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+
+  redis:
+    image: redis:8.2-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.76.0
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+
+volumes:
+  aegis-data:
+  qdrant-data:
+  redis-data:
