@@ -234,7 +234,7 @@ def create_app() -> FastAPI:
     async def scenarios(
         x_tenant_id: str | None = Header(default=None),
     ) -> list[ScenarioSummary]:
-        return state.scenario_runner.list(tenant(x_tenant_id))
+        return state.scenario_runner.list_scenarios(tenant(x_tenant_id))
 
     @app.post("/v1/scenarios/run", response_model=ScenarioRunResponse)
     async def run_scenario(

@@ -71,7 +71,7 @@ class ScenarioRunner:
         self.vector_index = vector_index
         self.scenario_dir = Path(scenario_dir)
 
-    def list(self, tenant_id: str | None = None) -> list[ScenarioSummary]:
+    def list_scenarios(self, tenant_id: str | None = None) -> list[ScenarioSummary]:
         return [
             ScenarioSummary(
                 id=scenario.id,
