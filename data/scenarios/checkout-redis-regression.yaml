@@ -1,0 +1,41 @@
+id: checkout-redis-regression
+name: Checkout latency regression after release
+description: Removal of Redis pipelining causes N+1 network calls and cache-pool saturation.
+tenant_id: globex-commerce
+service: checkout-api
+environment: production
+knowledge:
+  - data/knowledge/checkout-postmortem.md
+  - data/knowledge/service-catalog.md
+events:
+  - at_seconds: 0
+    type: deployment
+    name: deployment.version
+    value: checkout-2026.08.17.3
+  - at_seconds: 40
+    type: trace
+    name: redis.command.count_per_request
+    value: 101
+    attributes: {trace_id: tr_chk_1042, cart_items: 100}
+  - at_seconds: 55
+    type: metric
+    name: checkout.p99_latency_ms
+    value: 6200
+  - at_seconds: 70
+    type: log
+    name: application.warning
+    value: Redis client connection pool wait exceeded 2 seconds
+  - at_seconds: 85
+    type: metric
+    name: checkout.p99_latency_ms
+    value: 8300
+alert:
+  metric: checkout.p99_latency_ms
+  operator: ">"
+  threshold: 5000
+  occurrences: 2
+expected:
+  incident: true
+  relevant_terms:
+    - removed a Redis pipeline
+    - N+1 access pattern

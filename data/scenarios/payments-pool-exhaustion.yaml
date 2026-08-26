@@ -1,0 +1,46 @@
+id: payments-pool-exhaustion
+name: Payments API unavailable after deployment
+description: A concurrency increase exhausts the PostgreSQL connection pool and drives HTTP 503s.
+tenant_id: acme-payments
+service: payments-api
+environment: production
+knowledge:
+  - data/knowledge/payments-incident-runbook.md
+  - data/knowledge/service-catalog.md
+events:
+  - at_seconds: 0
+    type: deployment
+    name: deployment.version
+    value: payments-api:v42
+    attributes: {commit_sha: a9f14c2, concurrency: 50}
+  - at_seconds: 30
+    type: metric
+    name: db.pool.utilization
+    value: 0.85
+  - at_seconds: 45
+    type: metric
+    name: db.pool.wait.p99_ms
+    value: 1800
+  - at_seconds: 60
+    type: log
+    name: application.error
+    value: db_pool_timeout acquiring PostgreSQL connection
+    attributes: {level: ERROR, trace_id: tr_pay_001}
+  - at_seconds: 75
+    type: metric
+    name: http.server.503.rate
+    value: 0.24
+  - at_seconds: 90
+    type: metric
+    name: http.server.503.rate
+    value: 0.42
+alert:
+  metric: http.server.503.rate
+  operator: ">"
+  threshold: 0.10
+  occurrences: 2
+expected:
+  incident: true
+  relevant_terms:
+    - connections are exhausted
+    - stop the rollout

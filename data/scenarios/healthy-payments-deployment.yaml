@@ -1,0 +1,28 @@
+id: healthy-payments-deployment
+name: Healthy payments deployment
+description: Normal post-deployment variance that must not create an incident.
+tenant_id: acme-payments
+service: payments-api
+environment: production
+knowledge:
+  - data/knowledge/payments-incident-runbook.md
+events:
+  - at_seconds: 0
+    type: deployment
+    name: deployment.version
+    value: payments-api:v41
+  - at_seconds: 30
+    type: metric
+    name: http.server.503.rate
+    value: 0.01
+  - at_seconds: 60
+    type: metric
+    name: http.server.503.rate
+    value: 0.02
+alert:
+  metric: http.server.503.rate
+  operator: ">"
+  threshold: 0.10
+  occurrences: 2
+expected:
+  incident: false

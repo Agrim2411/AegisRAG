@@ -1,0 +1,6 @@
+{"question":"How long are audit events retained?","relevant_documents":["doc_"],"relevant_terms":["365 days"]}
+{"question":"What is the recovery point objective?","relevant_documents":["doc_"],"relevant_terms":["15 minute"]}
+{"question":"Why does the system use hybrid retrieval?","relevant_documents":["doc_"],"relevant_terms":["exact identifiers"]}
+{"question":"Why is payments-api returning db_pool_timeout and HTTP 503?","relevant_documents":[],"relevant_terms":["connections are exhausted"]}
+{"question":"What caused checkout latency in incident INC-1042?","relevant_documents":[],"relevant_terms":["removed a Redis pipeline"]}
+{"question":"Who owns the payments API and what are its dependencies?","relevant_documents":[],"relevant_terms":["Payments Platform team"]}
