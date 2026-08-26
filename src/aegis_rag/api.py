@@ -236,6 +236,26 @@ def create_app() -> FastAPI:
     ) -> list[ScenarioSummary]:
         return state.scenario_runner.list_scenarios(tenant(x_tenant_id))
 
+    @app.get("/v1/scenarios/{scenario_id}")
+    async def scenario_definition(
+        scenario_id: str, x_tenant_id: str | None = Header(default=None)
+    ) -> dict:
+        tenant_id = tenant(x_tenant_id)
+        try:
+            scenario = state.scenario_runner.get_scenario(tenant_id, scenario_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except PermissionError as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+        result = scenario.model_dump(mode="json")
+        result["source_uri"] = f"data/scenarios/{scenario.id}.yaml"
+        result["persistence"] = {
+            "database": state.store.path,
+            "telemetry_table": "telemetry_events",
+            "incident_table": "incidents",
+        }
+        return result
+
     @app.post("/v1/scenarios/run", response_model=ScenarioRunResponse)
     async def run_scenario(
         payload: ScenarioRunRequest,

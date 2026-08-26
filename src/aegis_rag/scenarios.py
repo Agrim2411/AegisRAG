@@ -84,6 +84,12 @@ class ScenarioRunner:
             if tenant_id is None or scenario.tenant_id == tenant_id
         ]
 
+    def get_scenario(self, tenant_id: str, scenario_id: str) -> ScenarioDefinition:
+        scenario = self._load(scenario_id)
+        if scenario.tenant_id != tenant_id:
+            raise PermissionError("scenario belongs to another tenant")
+        return scenario
+
     def run(self, tenant_id: str, scenario_id: str, request_id: str) -> ScenarioRunResponse:
         scenario = self._load(scenario_id)
         if scenario.tenant_id != tenant_id:
