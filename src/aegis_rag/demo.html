@@ -355,7 +355,9 @@
 
     function humanAlertRule(alert) {
       const metric = alert.metric === "http.server.503.rate" ? "503 error rate" : alert.metric.replaceAll(".", " ");
-      return `Alert when ${metric} ${alert.operator} ${formatValue(alert.threshold)} twice`;
+      const operator = ({">": "above", ">=": "at or above", "<": "below", "<=": "at or below", "==": "equal to"})[alert.operator] || alert.operator;
+      const samples = `${alert.occurrences} consecutive ${alert.occurrences === 1 ? "sample" : "samples"}`;
+      return `Alert when ${metric} is ${operator} ${formatValue(alert.threshold)} for ${samples}`;
     }
 
     function eventIcon(kind) {
