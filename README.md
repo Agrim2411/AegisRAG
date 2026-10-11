@@ -216,12 +216,13 @@ The first two must create incidents. The healthy deployment must return `no_inci
 
 ## Project learning and interview guides
 
-Read the two Word guides in order:
+Read the two main Word guides in order, and use the reference for lookup:
 
 1. [Project Guide](output/docx/01_AegisRAG_Project_Guide.docx): learn the purpose, architecture, terminology, design choices, limitations, and how to explain the project in an interview.
-2. [Code Guide](output/docx/02_AegisRAG_Code_Guide.docx): follow requests through the important code, understand each technology's role, and study a worked example with actual intermediate values.
+2. [Code Journey Guide](output/docx/02_AegisRAG_Code_Guide.docx): follow requests through the important code, understand each technology's role, and inspect worked-example values beside the steps that produce them.
+3. [Code Reference](output/docx/03_AegisRAG_Code_Reference.docx): look up application files and functions, review model fields and tests, and practise deeper interview questions and additional exercises.
 
-Both guides include diagrams, chapter checkpoints with answers, interview follow-ups, and practice assessments. The opening page links to the new practice sections. The Word files replace the earlier interview Markdown, PDF, and text drafts.
+The Project Guide and Code Journey Guide form the main learning path. Use the Code Reference as needed rather than reading every file description in sequence. The guides retain diagrams, worked examples, chapter checkpoints with answers, interview follow-ups, and practice assessments. Opening-page links help you navigate. The Word files replace the earlier interview Markdown, PDF, and text drafts.
 
 Run the code guide's local walkthrough from the repository root after installing the developer dependencies:
 
