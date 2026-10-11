@@ -23,7 +23,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9", "httpx>=0.27,<1", "ruff>=0.5,<1"]
-docs = ["reportlab>=4.2,<5"]
 production = [
   "langchain-openai>=1.0,<2",
   "langgraph-checkpoint-postgres>=3.0,<4",

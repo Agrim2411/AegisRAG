@@ -214,18 +214,22 @@ python3 -m aegis_rag simulate \
 
 The first two must create incidents. The healthy deployment must return `no_incident`. All three must return `expected_outcome_verified: true`.
 
-## Project ownership and interview guide
+## Project learning and interview guides
 
-The detailed guide at `output/pdf/AegisRAG_Interview_Ownership_Guide.pdf` explains the complete execution path, retrieval mathematics, LangGraph state machine, multi-tenant boundaries, safety model, evaluation strategy, limitations, production scaling plan, and interview questions. It also compares every major technology choice with credible alternatives and explains when those alternatives would be better.
+Read the two Word guides in order:
 
-The editable source is `docs/AEGISRAG_INTERVIEW_GUIDE.md`. To rebuild the PDF:
+1. [Project Guide](output/docx/01_AegisRAG_Project_Guide.docx): learn the purpose, architecture, terminology, design choices, limitations, and how to explain the project in an interview.
+2. [Code Guide](output/docx/02_AegisRAG_Code_Guide.docx): follow requests through the important code, understand each technology's role, and study a worked example with actual intermediate values.
+
+Both guides include diagrams, chapter checkpoints with answers, interview follow-ups, and practice assessments. The opening page links to the new practice sections. The Word files replace the earlier interview Markdown, PDF, and text drafts.
+
+Run the code guide's local walkthrough from the repository root after installing the developer dependencies:
 
 ```bash
-python3 -m pip install -e '.[dev,docs]'
-make guide
+.venv/bin/python output/learning_lab/run_walkthrough.py
 ```
 
-Use the guide with the code-reading path near its end: follow one payments incident through `scenarios.py`, `store.py`, `retrieval.py`, `workflow.py`, `generation.py`, and `incidents.py`, then answer the included questions without notes.
+The exercise uses local providers and a fresh study database per run, checks successful and failing requests, and saves its observations under `output/learning_lab/run_*`. These generated results are ignored by Git. Follow the guide's HTTP exercises and answer its checkpoints without notes to assess your readiness.
 
 ## Production profile
 

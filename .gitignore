@@ -16,3 +16,6 @@ coverage.xml
 htmlcov/
 *.log
 tmp/
+
+# Generated learning exercise databases and observations
+output/learning_lab/run_*/

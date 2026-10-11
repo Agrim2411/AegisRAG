@@ -1,4 +1,4 @@
-.PHONY: install test smoke eval demo simulate lint guide
+.PHONY: install test smoke eval demo simulate lint
 
 install:
 	python3 -m pip install -e '.[dev]'
@@ -20,6 +20,3 @@ simulate:
 
 smoke:
 	./scripts/smoke.sh
-
-guide:
-	python3 scripts/generate_interview_guide.py
